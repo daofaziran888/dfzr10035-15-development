@@ -9,7 +9,8 @@ class SchemaDiffService(BaseModuleService):
     MODULE = "schema_diff"
     ENTITY = "差异记录"
     OPERATION_TERM = "关联"
-    LIST_FIELDS = ["记录编号", "关联端点", "变更字段", "旧定义", "新定义", "差异等级", "影响评估", "检测时间"]
+    LIST_FIELDS = ["记录编号", "关联端点", "变更字段", "旧定义", "新定义", "差异等级",
+                   "影响评估", "检测时间", "引用差异", "键映射"]
     REQUIRED_FIELDS = ["记录编号", "关联端点", "变更字段"]
     STATUS_ORDER = ["已检测", "评估中", "已确认", "已忽略"]
     ACTION_RULES = {"发起评估": "评估中", "确认变更": "已确认", "忽略差异": "已忽略"}
@@ -100,3 +101,8 @@ class SchemaDiffService(BaseModuleService):
             "endpoints_affected": sum(1 for ep in endpoints if ep.get("status") == "Schema变更"),
             "govern_items": len(govern_reports),
         }
+
+    def review_workspace(self, endpoint: str | None = None) -> dict:
+        """差异复核工作台：差异、分组、证据、待办、报告、版本可统一回查。"""
+        from app.services.diff_review import workspace
+        return workspace(endpoint)
